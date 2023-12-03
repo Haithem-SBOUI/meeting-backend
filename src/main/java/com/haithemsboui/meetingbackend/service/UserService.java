@@ -57,17 +57,17 @@ public class UserService {
         try {
             User ConvertedUser = convertDtoToUserEntity(newUser);
             userRepository.save(ConvertedUser);
-            return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
         } catch (DataIntegrityViolationException e) {
             String username = newUser.getUsername();
             String email = newUser.getEmail();
             String errorMessage = e.getCause().getMessage();
             if (errorMessage.contains(username)) {
-                return new ResponseEntity<>("username already exists", HttpStatus.CONFLICT);
+                return ResponseEntity.status(HttpStatus.CREATED).body("username already exists");
             } else if (errorMessage.contains(email)) {
-                return new ResponseEntity<>("Email already exists", HttpStatus.CONFLICT);
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
             } else {
-                return new ResponseEntity<>("Registration failed due to a database constraint", HttpStatus.BAD_REQUEST);
+                return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed due to a database constraint");
             }
         }
     }
