@@ -22,7 +22,11 @@ public class MeetingController {
 
 
     //    ### POST ###
-//    create =>
+//    ###############################################################
+//    update creation to add generate meet code to be like google meet
+//    ###############################################################
+
+    //    create =>
     @PostMapping("/create")
     public ResponseEntity<String> createMeeting(@RequestBody CreateMeetingDto createMeetingDto) {
         return meetingService.createMeeting(createMeetingDto);
