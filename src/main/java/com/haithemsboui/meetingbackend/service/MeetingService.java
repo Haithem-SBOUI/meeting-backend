@@ -29,7 +29,7 @@ public class MeetingService {
         try {
             Meeting meeting = convertDtoToMeetingEntity(newMeeting);
             meetingRepository.save(meeting);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Meeting created successfully");
+            return ResponseEntity.ok().body("Meeting created successfully");
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Meeting creation failed due to a database constraint");
 
