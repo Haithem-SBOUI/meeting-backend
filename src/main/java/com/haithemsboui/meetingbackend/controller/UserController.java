@@ -34,14 +34,19 @@ public class UserController {
         return userService.logout(email);
     }
 
-    @GetMapping("/show-user/{id}")
+    @GetMapping("/all-user")
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    @GetMapping("/show-user-by-id/{id}")
     public Optional<User> getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
-    @GetMapping("/all-user")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    @GetMapping("/show-user-by-email/{email}")
+    public Optional<User> getUserByEmail(@PathVariable String email) {
+        return userService.getUserByEmail(email);
     }
 
     @PutMapping("/update-user/{id}")

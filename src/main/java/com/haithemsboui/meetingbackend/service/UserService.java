@@ -24,11 +24,13 @@ public class UserService {
         Optional<User> user = userRepository.findByEmail(authRequest.getEmail());
         if (user.isPresent()) {
             if (authRequest.getPassword().equals(user.get().getPassword())) {
+                Long id = user.get().getUserId();
                 String email = user.get().getEmail();
                 String username = user.get().getUsername();
                 user.get().setStatus("online");
                 userRepository.save(user.get());
                 return ResponseEntity.ok(AuthResponseDto.builder()
+                        .id(id)
                         .email(email)
                         .username(username)
                         .build());
@@ -63,7 +65,7 @@ public class UserService {
             String email = newUser.getEmail();
             String errorMessage = e.getCause().getMessage();
             if (errorMessage.contains(username)) {
-                return ResponseEntity.status(HttpStatus.CREATED).body("username already exists");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("username already exists");
             } else if (errorMessage.contains(email)) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
             } else {
@@ -87,6 +89,10 @@ public class UserService {
 
     public Optional<User> getUserById(Long userId) {
         return userRepository.findById(userId);
+    }
+
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public List<User> getAllUsers() {
