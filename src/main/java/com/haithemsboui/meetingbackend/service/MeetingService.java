@@ -1,7 +1,7 @@
 package com.haithemsboui.meetingbackend.service;
 
-import com.haithemsboui.meetingbackend.dto.CreateMeetingDto;
-import com.haithemsboui.meetingbackend.dto.RegisterRequestDto;
+import com.haithemsboui.meetingbackend.dto.CreateMeetingRequestDto;
+import com.haithemsboui.meetingbackend.dto.CreateMeetingResponseDto;
 import com.haithemsboui.meetingbackend.model.Meeting;
 import com.haithemsboui.meetingbackend.model.MeetingStatus;
 import com.haithemsboui.meetingbackend.model.User;
@@ -25,19 +25,28 @@ public class MeetingService {
     private final UserRepository userRepository;
     private final MeetingRepository meetingRepository;
 
-    public ResponseEntity<String> createMeeting(CreateMeetingDto newMeeting) {
+    public ResponseEntity<?> createMeeting(CreateMeetingRequestDto newMeeting) {
         try {
             Meeting meeting = convertDtoToMeetingEntity(newMeeting);
             meetingRepository.save(meeting);
-            return ResponseEntity.ok().body("Meeting created successfully");
+//            todo: add create responseDto methode to return result to frontend and edit frontend to show them
+            return ResponseEntity.ok().body(CreateMeetingResponseDto.builder()
+                    .roomId(meeting.getRoomId())
+                    .title(meeting.getTitle())
+                    .maxAttendees(meeting.getMaxAttendees())
+                    .dateTime(meeting.getDateTime())
+                    .description(meeting.getDescription())
+                    .status(meeting.getStatus())
+                    .build());
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Meeting creation failed due to a database constraint");
 
         }
     }
 
-    private Meeting convertDtoToMeetingEntity(CreateMeetingDto newMeeting) {
+    private Meeting convertDtoToMeetingEntity(CreateMeetingRequestDto newMeeting) {
         Meeting meeting = new Meeting();
+        meeting.setRoomId(generateRoomId());
         meeting.setTitle(newMeeting.getTitle());
         meeting.setDescription(newMeeting.getDescription());
         meeting.setDateTime(newMeeting.getDateTime());
@@ -49,6 +58,11 @@ public class MeetingService {
         organizers.add(organizer);
         meeting.setOrganizer(organizers);
         return meeting;
+    }
+
+    private String generateRoomId() {
+        String uuid = UUID.randomUUID().toString();
+        return uuid.substring(0, 3) + "-" + uuid.substring(9, 12) + "-" + uuid.substring(14, 17);
     }
 
     public ResponseEntity<?> getAllMeeting() {
@@ -78,10 +92,14 @@ public class MeetingService {
         if (meeting.isPresent()) {
             meeting.get().setStatus(status);
             meetingRepository.save(meeting.get());
-            return ResponseEntity.ok("Status changed to " + status +" successfully");
+            return ResponseEntity.ok("Status changed to " + status + " successfully");
         } else {
             return ResponseEntity.ok("meeting with id = " + id + " not found");
 
         }
+    }
+
+    public Optional<Meeting> getMeetingByRoomId(String roomId) {
+        return meetingRepository.findByRoomId(roomId);
     }
 }

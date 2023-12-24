@@ -1,15 +1,18 @@
 package com.haithemsboui.meetingbackend.controller;
 
 
-import com.haithemsboui.meetingbackend.dto.CreateMeetingDto;
+import com.haithemsboui.meetingbackend.dto.CreateMeetingRequestDto;
+import com.haithemsboui.meetingbackend.model.Meeting;
 import com.haithemsboui.meetingbackend.model.MeetingStatus;
 import com.haithemsboui.meetingbackend.service.MeetingService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -28,7 +31,7 @@ public class MeetingController {
 
     //    create =>
     @PostMapping("/create")
-    public ResponseEntity<String> createMeeting(@RequestBody CreateMeetingDto createMeetingDto) {
+    public ResponseEntity<?> createMeeting(@RequestBody @Valid CreateMeetingRequestDto createMeetingDto) {
         return meetingService.createMeeting(createMeetingDto);
     }
 
@@ -37,6 +40,11 @@ public class MeetingController {
     @GetMapping("/get-all-meeting")
     public ResponseEntity<?> getAllMeeting() {
         return meetingService.getAllMeeting();
+    }
+
+    @GetMapping("/get-meeting-by-room-id/{roomId}")
+    public Optional<Meeting> getMeetingByRoomId(@PathVariable String roomId) {
+        return meetingService.getMeetingByRoomId(roomId);
     }
 
 

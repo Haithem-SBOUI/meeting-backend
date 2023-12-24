@@ -26,6 +26,9 @@ public interface MeetingRepository extends JpaRepository<Meeting, UUID> {
 
     List<Meeting> findByStatus(MeetingStatus status);
 
+    Optional<Meeting> findByRoomId(String roomId);
+
+
     @Override
     Optional<Meeting> findById(UUID uuid);
 
