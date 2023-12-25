@@ -25,9 +25,9 @@ public class MeetingController {
 
 
     //    ### POST ###
-//    ############################################################################
-//    TODO : update creation to add generate meet code to be like google meet
-//    ############################################################################
+    //    ############################################################################
+    //    TODO : update creation to add generate meet code to be like google meet
+    //    ############################################################################
 
     //    create =>
     @PostMapping("/create")
@@ -69,12 +69,10 @@ public class MeetingController {
     }
 
 
-
-
-//    ### update ###
+    //    ### update ###
 //    change status (CANCELED)
     @PutMapping("/update-meeting-status/{id}/{status}")
-    public ResponseEntity<String> updateMeetingStatus(@PathVariable UUID id, @PathVariable MeetingStatus status){
+    public ResponseEntity<String> updateMeetingStatus(@PathVariable UUID id, @PathVariable MeetingStatus status) {
         return meetingService.updateMeetingStatus(id, status);
     }
 
@@ -83,7 +81,6 @@ public class MeetingController {
 
 
 //    delete by meeting id
-
 
 
 }
