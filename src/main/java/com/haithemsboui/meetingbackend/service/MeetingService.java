@@ -2,6 +2,7 @@ package com.haithemsboui.meetingbackend.service;
 
 import com.haithemsboui.meetingbackend.dto.CreateMeetingRequestDto;
 import com.haithemsboui.meetingbackend.dto.CreateMeetingResponseDto;
+import com.haithemsboui.meetingbackend.dto.MeetingDetailsDto;
 import com.haithemsboui.meetingbackend.model.Meeting;
 import com.haithemsboui.meetingbackend.model.MeetingStatus;
 import com.haithemsboui.meetingbackend.model.User;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,8 +67,34 @@ public class MeetingService {
         return uuid.substring(0, 3) + "-" + uuid.substring(9, 12) + "-" + uuid.substring(14, 17);
     }
 
-    public ResponseEntity<?> getAllMeeting() {
-        return ResponseEntity.ok(meetingRepository.findAll());
+    // !in case i want to return only the organizer id and not the whole organizer object
+//    public List<MeetingDetailsDto> getAllMeeting() {
+//        List<Meeting> meetings = meetingRepository.findAll();
+//
+//        return meetings.stream()
+//                .map(meeting -> MeetingDetailsDto.builder()
+//                        .organizerId(getFirstOrganizerId(meeting.getOrganizer()))
+//                        .roomId(meeting.getRoomId())
+//                        .title(meeting.getTitle())
+//                        .description(meeting.getDescription())
+//                        .dateTime(meeting.getDateTime())
+//                        .maxAttendees(meeting.getMaxAttendees())
+//                        .status(meeting.getStatus())
+//                        .build())
+//                .collect(Collectors.toList());
+//
+//    }
+
+    public List<Meeting> getAllMeeting() {
+        return meetingRepository.findAll();
+
+    }
+
+    private Long getFirstOrganizerId(Set<User> organizers) {
+        if (organizers != null && !organizers.isEmpty()) {
+            return organizers.iterator().next().getUserId();
+        }
+        return null; // or handle the case when there are no organizers
     }
 
     public ResponseEntity<?> getMeetingByOrganizerEmail(String email) {

@@ -1,6 +1,7 @@
 package com.haithemsboui.meetingbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,7 +22,7 @@ public class Meeting {
     private UUID id = UUID.randomUUID();
 
     @ManyToMany
-    @JsonBackReference
+    @JsonManagedReference
     @JoinTable(
             name = "meeting_details",
             joinColumns = @JoinColumn(name = "meeting_id"),

@@ -1,5 +1,6 @@
 package com.haithemsboui.meetingbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -18,7 +19,7 @@ public class User {
     private Long userId;
 
     @ManyToMany(mappedBy = "organizer")
-    @JsonManagedReference
+    @JsonBackReference
     private Set<Meeting> meetings = new HashSet<>();
 
 

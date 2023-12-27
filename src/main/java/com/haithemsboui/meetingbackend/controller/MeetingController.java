@@ -2,6 +2,7 @@ package com.haithemsboui.meetingbackend.controller;
 
 
 import com.haithemsboui.meetingbackend.dto.CreateMeetingRequestDto;
+import com.haithemsboui.meetingbackend.dto.MeetingDetailsDto;
 import com.haithemsboui.meetingbackend.model.Meeting;
 import com.haithemsboui.meetingbackend.model.MeetingStatus;
 import com.haithemsboui.meetingbackend.service.MeetingService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,9 +27,7 @@ public class MeetingController {
 
 
     //    ### POST ###
-    //    ############################################################################
-    //    TODO : update creation to add generate meet code to be like google meet
-    //    ############################################################################
+
 
     //    create =>
     @PostMapping("/create")
@@ -38,7 +38,7 @@ public class MeetingController {
     //    ### GET ###
 //    get all
     @GetMapping("/get-all-meeting")
-    public ResponseEntity<?> getAllMeeting() {
+    public List<Meeting> getAllMeeting() {
         return meetingService.getAllMeeting();
     }
 
