@@ -5,6 +5,7 @@ import com.haithemsboui.meetingbackend.dto.AuthResponseDto;
 import com.haithemsboui.meetingbackend.dto.RegisterRequestDto;
 import com.haithemsboui.meetingbackend.model.User;
 import com.haithemsboui.meetingbackend.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -117,12 +118,16 @@ public class UserService {
     }
 
 
+    @Transactional
     public ResponseEntity<String> deleteUserById(Long id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteByUserId(id);
-            return ResponseEntity.ok("User deleted successfully");
-        } else {
+            return ResponseEntity.ok().build();
+        } else if (!userRepository.existsById(id)){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("User not found, id = " + id);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("User not found, id = " + id);
         }
     }

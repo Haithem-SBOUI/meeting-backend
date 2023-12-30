@@ -19,7 +19,8 @@ import java.util.UUID;
 public class Meeting {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id = UUID.randomUUID();
+    @Column( name = "meeting_id")
+    private UUID meetingId = UUID.randomUUID();
 
     @ManyToMany
     @JsonManagedReference

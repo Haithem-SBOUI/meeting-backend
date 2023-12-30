@@ -2,7 +2,6 @@ package com.haithemsboui.meetingbackend.controller;
 
 
 import com.haithemsboui.meetingbackend.dto.CreateMeetingRequestDto;
-import com.haithemsboui.meetingbackend.dto.MeetingDetailsDto;
 import com.haithemsboui.meetingbackend.model.Meeting;
 import com.haithemsboui.meetingbackend.model.MeetingStatus;
 import com.haithemsboui.meetingbackend.service.MeetingService;

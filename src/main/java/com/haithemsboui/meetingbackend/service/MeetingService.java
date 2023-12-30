@@ -2,7 +2,6 @@ package com.haithemsboui.meetingbackend.service;
 
 import com.haithemsboui.meetingbackend.dto.CreateMeetingRequestDto;
 import com.haithemsboui.meetingbackend.dto.CreateMeetingResponseDto;
-import com.haithemsboui.meetingbackend.dto.MeetingDetailsDto;
 import com.haithemsboui.meetingbackend.model.Meeting;
 import com.haithemsboui.meetingbackend.model.MeetingStatus;
 import com.haithemsboui.meetingbackend.model.User;
@@ -18,7 +17,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -93,8 +91,10 @@ public class MeetingService {
     private Long getFirstOrganizerId(Set<User> organizers) {
         if (organizers != null && !organizers.isEmpty()) {
             return organizers.iterator().next().getUserId();
-        }
-        return null; // or handle the case when there are no organizers
+        }else{
+            System.out.println(organizers.iterator().next().getUserId()); //return null
+        return 9999L; // or handle the case when there are no organizers
+    }
     }
 
     public ResponseEntity<?> getMeetingByOrganizerEmail(String email) {
@@ -129,5 +129,16 @@ public class MeetingService {
 
     public Optional<Meeting> getMeetingByRoomId(String roomId) {
         return meetingRepository.findByRoomId(roomId);
+
+//        return Optional.ofNullable(MeetingDetailsDto.builder()
+//                .organizerId(getFirstOrganizerId(meeting.get().getOrganizer()))
+//                .roomId(meeting.get().getRoomId())
+//                .title(meeting.get().getTitle())
+//                .description(meeting.get().getDescription())
+//                .dateTime(meeting.get().getDateTime())
+//                .maxAttendees(meeting.get().getMaxAttendees())
+//                .status(meeting.get().getStatus())
+//                .build());
+
     }
 }
