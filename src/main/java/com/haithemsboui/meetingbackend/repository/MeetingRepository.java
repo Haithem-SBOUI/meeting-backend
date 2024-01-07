@@ -15,14 +15,11 @@ public interface MeetingRepository extends JpaRepository<Meeting, UUID> {
     @Query("select m from Meeting m join m.organizer o where o.email = 'string@email1.com'")
     List<Meeting> findByOrganizerEmail(String email);
 
-
-
     @Query("SELECT m FROM Meeting m WHERE m.dateTime BETWEEN :dateTimeMin AND :dateTimeMax")
     List<Meeting> findByDateTimeBetween(
             @Param("dateTimeMin") LocalDateTime dateTimeMin,
             @Param("dateTimeMax") LocalDateTime dateTimeMax
     );
-
 
     List<Meeting> findByStatus(MeetingStatus status);
 

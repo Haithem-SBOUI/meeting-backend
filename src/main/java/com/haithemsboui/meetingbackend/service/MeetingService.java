@@ -2,11 +2,13 @@ package com.haithemsboui.meetingbackend.service;
 
 import com.haithemsboui.meetingbackend.dto.CreateMeetingRequestDto;
 import com.haithemsboui.meetingbackend.dto.CreateMeetingResponseDto;
+import com.haithemsboui.meetingbackend.dto.UpdatedMeetingRequestDto;
 import com.haithemsboui.meetingbackend.model.Meeting;
 import com.haithemsboui.meetingbackend.model.MeetingStatus;
 import com.haithemsboui.meetingbackend.model.User;
 import com.haithemsboui.meetingbackend.repository.MeetingRepository;
 import com.haithemsboui.meetingbackend.repository.UserRepository;
+import com.sun.jdi.InternalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -140,5 +142,29 @@ public class MeetingService {
 //                .status(meeting.get().getStatus())
 //                .build());
 
+    }
+
+    public String updateMeeting(UUID id, UpdatedMeetingRequestDto updatedMeetingRequestDto) {
+        Optional<Meeting> meeting = meetingRepository.findById(id);
+        if (meeting.isPresent()) {
+
+            meeting.get().setTitle(updatedMeetingRequestDto.getTitle());
+            meeting.get().setDescription(updatedMeetingRequestDto.getDescription());
+            meeting.get().setDateTime(updatedMeetingRequestDto.getDateTime());
+            meeting.get().setMaxAttendees(updatedMeetingRequestDto.getMaxAttendees());
+            meeting.get().setStatus(updatedMeetingRequestDto.getStatus());
+
+            meetingRepository.save(meeting.get());
+            return "Meeting updated successfully";
+        } else {
+            throw new NoSuchElementException("Meeting with ID not found");
+        }
+    }
+
+    public void deleteMeetingById(UUID id) {
+        meetingRepository.deleteById(id);
+        if (meetingRepository.existsById(id)){
+            throw new InternalException("problem saret wa9t deleteMeetingById");
+        }
     }
 }

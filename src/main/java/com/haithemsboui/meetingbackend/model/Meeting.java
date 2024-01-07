@@ -33,7 +33,6 @@ public class Meeting {
     @Column( name = "room_id", unique = true)
     private String roomId;
 
-
     private String title;
 
     @Column( length = 1000)

@@ -6,12 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-
 @Data
 @Builder
-public class CreateMeetingRequestDto {
-    @NotNull
-    private Long organizer_id;
+public class UpdatedMeetingRequestDto {
 
     @NotNull
     private String title;
@@ -24,5 +21,4 @@ public class CreateMeetingRequestDto {
     private int maxAttendees;
 
     private MeetingStatus status;
-
 }

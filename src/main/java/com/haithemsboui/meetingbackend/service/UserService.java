@@ -3,7 +3,9 @@ package com.haithemsboui.meetingbackend.service;
 import com.haithemsboui.meetingbackend.dto.AuthRequestDto;
 import com.haithemsboui.meetingbackend.dto.AuthResponseDto;
 import com.haithemsboui.meetingbackend.dto.RegisterRequestDto;
+import com.haithemsboui.meetingbackend.dto.UpdatePasswordDto;
 import com.haithemsboui.meetingbackend.model.User;
+import com.haithemsboui.meetingbackend.model.UserRole;
 import com.haithemsboui.meetingbackend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +85,7 @@ public class UserService {
         user.setLastname(newUser.getLastname());
         user.setPassword(newUser.getPassword());
         user.setImageUrl(newUser.getImageUrl());
-        user.setRole(newUser.getRole());
+        user.setRole(UserRole.valueOf(newUser.getRole()));
         user.setStatus("offline");
         return user;
     }
@@ -132,4 +134,17 @@ public class UserService {
         }
     }
 
+    public void updatePassword(Long id, UpdatePasswordDto updatePasswordDto) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            if (user.get().getPassword().equals(updatePasswordDto.getOldPassword())) {
+                user.get().setPassword(updatePasswordDto.getNewPassword());
+                userRepository.save(user.get());
+            }else {
+                throw new RuntimeException("wrong password");
+            }
+        }else {
+            throw new RuntimeException("wrong user id");
+        }
+    }
 }

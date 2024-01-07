@@ -2,17 +2,22 @@ package com.haithemsboui.meetingbackend.controller;
 
 
 import com.haithemsboui.meetingbackend.dto.CreateMeetingRequestDto;
+import com.haithemsboui.meetingbackend.dto.StringToJsonDto;
+import com.haithemsboui.meetingbackend.dto.UpdatedMeetingRequestDto;
 import com.haithemsboui.meetingbackend.model.Meeting;
 import com.haithemsboui.meetingbackend.model.MeetingStatus;
 import com.haithemsboui.meetingbackend.service.MeetingService;
+import com.sun.jdi.InternalException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -69,7 +74,22 @@ public class MeetingController {
 
 
     //    ### update ###
-//    change status (CANCELED)
+
+    //    update meeting details
+    @PutMapping("/update-meeting/{id}/")
+    public ResponseEntity<?> updateMeeting(@PathVariable UUID id, @RequestBody UpdatedMeetingRequestDto updatedMeetingRequestDto) {
+        try {
+            return ResponseEntity.ok(
+                    StringToJsonDto.builder()
+                            .message(meetingService.updateMeeting(id, updatedMeetingRequestDto))
+                            .build());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
+    }
+
+    //    change status (CANCELED)
     @PutMapping("/update-meeting-status/{id}/{status}")
     public ResponseEntity<String> updateMeetingStatus(@PathVariable UUID id, @PathVariable MeetingStatus status) {
         return meetingService.updateMeetingStatus(id, status);
@@ -79,7 +99,16 @@ public class MeetingController {
 //    delete by organizer id
 
 
-//    delete by meeting id
+    //    delete by meeting id
+    @DeleteMapping("/delete-meeting-by-id/{id}")
+    public ResponseEntity<?> deleteMeetingById(@PathVariable UUID id) {
+        try {
+            meetingService.deleteMeetingById(id);
+            return ResponseEntity.noContent().build();
+        }catch( InternalException e) {
+            return ResponseEntity.internalServerError().build();
+        }
 
+    }
 
 }
