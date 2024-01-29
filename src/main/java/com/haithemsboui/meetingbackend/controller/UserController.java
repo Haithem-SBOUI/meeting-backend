@@ -78,13 +78,13 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(StringToJsonDto
                                 .builder()
-                                .message("wrong password")
+                                .message(e.getMessage())
                                 .build());
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(StringToJsonDto
                                 .builder()
-                                .message("User Not Found")
+                                .message("User Not Found!")
                                 .build());
 
             }

@@ -93,10 +93,10 @@ public class MeetingService {
     private Long getFirstOrganizerId(Set<User> organizers) {
         if (organizers != null && !organizers.isEmpty()) {
             return organizers.iterator().next().getUserId();
-        }else{
+        } else {
             System.out.println(organizers.iterator().next().getUserId()); //return null
-        return 9999L; // or handle the case when there are no organizers
-    }
+            return 9999L; // or handle the case when there are no organizers
+        }
     }
 
     public ResponseEntity<?> getMeetingByOrganizerEmail(String email) {
@@ -163,7 +163,7 @@ public class MeetingService {
 
     public void deleteMeetingById(UUID id) {
         meetingRepository.deleteById(id);
-        if (meetingRepository.existsById(id)){
+        if (meetingRepository.existsById(id)) {
             throw new InternalException("problem saret wa9t deleteMeetingById");
         }
     }
