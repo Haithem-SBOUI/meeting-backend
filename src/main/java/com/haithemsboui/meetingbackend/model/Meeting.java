@@ -13,29 +13,27 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@Builder
+@RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "meeting")
 public class Meeting {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column( name = "meeting_id")
-    private UUID meetingId = UUID.randomUUID();
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "meeting_id")
+    private Long id ;
 
-    @ManyToMany
+    @ManyToOne
     @JsonManagedReference
-    @JoinTable(
-            name = "meeting_details",
-            joinColumns = @JoinColumn(name = "meeting_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> organizer = new HashSet<>();
+    @JoinColumn(name = "organizer_id")
+    private User organizer;
 
-    @Column( name = "room_id", unique = true)
+    @Column(name = "room_id", unique = true)
     private String roomId;
 
     private String title;
 
-    @Column( length = 1000)
+    @Column(length = 1000)
     private String description;
 
     @Column(name = "date_time")

@@ -10,4 +10,6 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 public class StringToJsonDto {
     private String message;
+
+
 }

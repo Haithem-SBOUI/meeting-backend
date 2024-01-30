@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface MeetingRepository extends JpaRepository<Meeting, UUID> {
-    @Query("select m from Meeting m join m.organizer o where o.email = 'string@email1.com'")
+public interface MeetingRepository extends JpaRepository<Meeting, Long> {
+    @Query("select m from Meeting m join m.organizer o where o.email = :email")
     List<Meeting> findByOrganizerEmail(String email);
 
     @Query("SELECT m FROM Meeting m WHERE m.dateTime BETWEEN :dateTimeMin AND :dateTimeMax")
@@ -26,7 +26,5 @@ public interface MeetingRepository extends JpaRepository<Meeting, UUID> {
     Optional<Meeting> findByRoomId(String roomId);
 
 
-    @Override
-    Optional<Meeting> findById(UUID uuid);
 
 }

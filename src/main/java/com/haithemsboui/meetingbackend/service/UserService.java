@@ -27,7 +27,7 @@ public class UserService {
         Optional<User> user = userRepository.findByEmail(authRequest.getEmail());
         if (user.isPresent()) {
             if (authRequest.getPassword().equals(user.get().getPassword())) {
-                Long id = user.get().getUserId();
+                Long id = user.get().getId();
                 String email = user.get().getEmail();
                 String username = user.get().getUsername();
                 user.get().setStatus("online");
@@ -123,7 +123,7 @@ public class UserService {
     @Transactional
     public ResponseEntity<String> deleteUserById(Long id) {
         if (userRepository.existsById(id)) {
-            userRepository.deleteByUserId(id);
+            userRepository.deleteById(id);
             return ResponseEntity.ok().build();
         } else if (!userRepository.existsById(id)){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

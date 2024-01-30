@@ -1,24 +1,25 @@
 package com.haithemsboui.meetingbackend.service;
 
-import com.haithemsboui.meetingbackend.dto.CreateMeetingRequestDto;
-import com.haithemsboui.meetingbackend.dto.CreateMeetingResponseDto;
-import com.haithemsboui.meetingbackend.dto.UpdatedMeetingRequestDto;
+import com.haithemsboui.meetingbackend.core.exception.type.InternalServerErrorException;
+import com.haithemsboui.meetingbackend.core.exception.type.NotFoundException;
+import com.haithemsboui.meetingbackend.dto.MeetingDto;
+import com.haithemsboui.meetingbackend.dto.modelMapper.MeetingMapper;
+import com.haithemsboui.meetingbackend.dto.modelMapper.UserMapper;
 import com.haithemsboui.meetingbackend.model.Meeting;
 import com.haithemsboui.meetingbackend.model.MeetingStatus;
-import com.haithemsboui.meetingbackend.model.User;
 import com.haithemsboui.meetingbackend.repository.MeetingRepository;
 import com.haithemsboui.meetingbackend.repository.UserRepository;
 import com.sun.jdi.InternalException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,145 +27,101 @@ public class MeetingService {
 
     private final UserRepository userRepository;
     private final MeetingRepository meetingRepository;
+    private final MeetingMapper meetingMapper;
+    private final UserMapper userMapper;
 
-    public ResponseEntity<?> createMeeting(CreateMeetingRequestDto newMeeting) {
-        try {
-            Meeting meeting = convertDtoToMeetingEntity(newMeeting);
-            meetingRepository.save(meeting);
+    public MeetingDto createMeeting(MeetingDto newMeeting) {
+
+        if (userRepository.existsById(newMeeting.getOrganizer().getId())) {
+            newMeeting.setRoomId(generateRoomId());
+            Meeting meeting = meetingMapper.toEntity(newMeeting);
+            Meeting createdMeeting = meetingRepository.save(meeting);
+            MeetingDto meetingDto = meetingMapper.toDto(createdMeeting);
 //            todo: add create responseDto methode to return result to frontend and edit frontend to show them
-            return ResponseEntity.ok().body(CreateMeetingResponseDto.builder()
-                    .roomId(meeting.getRoomId())
-                    .title(meeting.getTitle())
-                    .maxAttendees(meeting.getMaxAttendees())
-                    .dateTime(meeting.getDateTime())
-                    .description(meeting.getDescription())
-                    .status(meeting.getStatus())
-                    .build());
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Meeting creation failed due to a database constraint");
-
+            return meetingDto;
+        } else {
+            throw new NotFoundException("Organizer not Found");
         }
     }
 
-    private Meeting convertDtoToMeetingEntity(CreateMeetingRequestDto newMeeting) {
-        Meeting meeting = new Meeting();
-        meeting.setRoomId(generateRoomId());
-        meeting.setTitle(newMeeting.getTitle());
-        meeting.setDescription(newMeeting.getDescription());
-        meeting.setDateTime(newMeeting.getDateTime());
-        meeting.setMaxAttendees(newMeeting.getMaxAttendees());
-        meeting.setStatus(newMeeting.getStatus());
-
-        User organizer = userRepository.findById(newMeeting.getOrganizer_id()).orElse(null);
-        Set<User> organizers = new HashSet<>();
-        organizers.add(organizer);
-        meeting.setOrganizer(organizers);
-        return meeting;
-    }
-
-    private String generateRoomId() {
+    public String generateRoomId() {
         String uuid = UUID.randomUUID().toString();
         return uuid.substring(0, 3) + "-" + uuid.substring(9, 12) + "-" + uuid.substring(14, 17);
     }
 
-    // !in case i want to return only the organizer id and not the whole organizer object
-//    public List<MeetingDetailsDto> getAllMeeting() {
-//        List<Meeting> meetings = meetingRepository.findAll();
-//
-//        return meetings.stream()
-//                .map(meeting -> MeetingDetailsDto.builder()
-//                        .organizerId(getFirstOrganizerId(meeting.getOrganizer()))
-//                        .roomId(meeting.getRoomId())
-//                        .title(meeting.getTitle())
-//                        .description(meeting.getDescription())
-//                        .dateTime(meeting.getDateTime())
-//                        .maxAttendees(meeting.getMaxAttendees())
-//                        .status(meeting.getStatus())
-//                        .build())
-//                .collect(Collectors.toList());
-//
-//    }
 
-    public List<Meeting> getAllMeeting() {
-        return meetingRepository.findAll();
-
-    }
-
-    private Long getFirstOrganizerId(Set<User> organizers) {
-        if (organizers != null && !organizers.isEmpty()) {
-            return organizers.iterator().next().getUserId();
+    public List<MeetingDto> getAllMeeting() {
+        List<Meeting> allMeetings = meetingRepository.findAll();
+        if (!allMeetings.isEmpty()) {
+            return meetingMapper.toDtoList(allMeetings);
         } else {
-            System.out.println(organizers.iterator().next().getUserId()); //return null
-            return 9999L; // or handle the case when there are no organizers
+            return Collections.emptyList();
         }
     }
 
-    public ResponseEntity<?> getMeetingByOrganizerEmail(String email) {
-        List<Meeting> listMeeting = meetingRepository.findByOrganizerEmail(email);
-        return ResponseEntity.ok(listMeeting);
+
+    public List<MeetingDto> getMeetingByOrganizerEmail(String email) {
+        List<Meeting> fetchedMeetings = meetingRepository.findByOrganizerEmail(email);
+        if (!fetchedMeetings.isEmpty()) {
+            return meetingMapper.toDtoList(fetchedMeetings);
+        } else {
+            return Collections.emptyList();
+        }
     }
 
-    public ResponseEntity<?> getMeetingByDate(LocalDate date) {
+    public List<MeetingDto> getMeetingByDate(LocalDate date) {
         LocalDateTime dateTimeMin = date.atTime(LocalTime.MIN);
         LocalDateTime dateTimeMax = date.atTime(LocalTime.MAX);
 
-        List<Meeting> listMeeting = meetingRepository.findByDateTimeBetween(dateTimeMin, dateTimeMax);
-        return ResponseEntity.ok(listMeeting);
-    }
-
-    public ResponseEntity<?> getMeetingByStatus(MeetingStatus status) {
-        List<Meeting> listMeeting = meetingRepository.findByStatus(status);
-        return ResponseEntity.ok(listMeeting);
-    }
-
-    public ResponseEntity<String> updateMeetingStatus(UUID id, MeetingStatus status) {
-        Optional<Meeting> meeting = meetingRepository.findById(id);
-        if (meeting.isPresent()) {
-            meeting.get().setStatus(status);
-            meetingRepository.save(meeting.get());
-            return ResponseEntity.ok("Status changed to " + status + " successfully");
+        List<Meeting> fetchedMeetings = meetingRepository.findByDateTimeBetween(dateTimeMin, dateTimeMax);
+        if (!fetchedMeetings.isEmpty()) {
+            return meetingMapper.toDtoList(fetchedMeetings);
         } else {
-            return ResponseEntity.ok("meeting with id = " + id + " not found");
-
+            return Collections.emptyList();
         }
     }
 
-    public Optional<Meeting> getMeetingByRoomId(String roomId) {
-        return meetingRepository.findByRoomId(roomId);
-
-//        return Optional.ofNullable(MeetingDetailsDto.builder()
-//                .organizerId(getFirstOrganizerId(meeting.get().getOrganizer()))
-//                .roomId(meeting.get().getRoomId())
-//                .title(meeting.get().getTitle())
-//                .description(meeting.get().getDescription())
-//                .dateTime(meeting.get().getDateTime())
-//                .maxAttendees(meeting.get().getMaxAttendees())
-//                .status(meeting.get().getStatus())
-//                .build());
-
-    }
-
-    public String updateMeeting(UUID id, UpdatedMeetingRequestDto updatedMeetingRequestDto) {
-        Optional<Meeting> meeting = meetingRepository.findById(id);
-        if (meeting.isPresent()) {
-
-            meeting.get().setTitle(updatedMeetingRequestDto.getTitle());
-            meeting.get().setDescription(updatedMeetingRequestDto.getDescription());
-            meeting.get().setDateTime(updatedMeetingRequestDto.getDateTime());
-            meeting.get().setMaxAttendees(updatedMeetingRequestDto.getMaxAttendees());
-            meeting.get().setStatus(updatedMeetingRequestDto.getStatus());
-
-            meetingRepository.save(meeting.get());
-            return "Meeting updated successfully";
+    public List<MeetingDto> getMeetingByStatus(MeetingStatus status) {
+        List<Meeting> fetchedMeetings = meetingRepository.findByStatus(status);
+        if (!fetchedMeetings.isEmpty()) {
+            return meetingMapper.toDtoList(fetchedMeetings);
         } else {
-            throw new NoSuchElementException("Meeting with ID not found");
+            return Collections.emptyList();
         }
     }
 
-    public void deleteMeetingById(UUID id) {
+
+    public MeetingDto getMeetingByRoomId(String roomId) {
+        Optional<Meeting> fetchedMeeting = meetingRepository.findByRoomId(roomId);
+        if (fetchedMeeting.isPresent()) {
+            return meetingMapper.toDto(fetchedMeeting.get());
+        } else {
+            throw new NotFoundException("Meeting with room id : " + roomId + " not found!");
+        }
+    }
+
+
+    public String updateMeetingStatus(Long id, MeetingStatus newStatus) {
+        Meeting meeting = meetingRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Meeting not found"));
+        meeting.setStatus(newStatus);
+        meetingRepository.save(meeting);
+        return "Status changed to " + newStatus + " successfully";
+    }
+
+
+    public String updateMeeting(Long id, MeetingDto updatedMeetingDto) {
+        Meeting existingMeeting = meetingRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Meeting not found"));
+        Meeting meeting = meetingMapper.toEntity(updatedMeetingDto);
+        meetingRepository.save(meeting);
+        return "Meeting updated successfully";
+    }
+
+    public void deleteMeetingById(Long id) {
         meetingRepository.deleteById(id);
         if (meetingRepository.existsById(id)) {
-            throw new InternalException("problem saret wa9t deleteMeetingById");
+            throw new InternalServerErrorException("problem while delete Meeting with id : " + id);
         }
     }
 }
