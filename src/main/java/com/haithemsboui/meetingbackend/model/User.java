@@ -5,9 +5,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -17,7 +22,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Table(name = "user")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -31,8 +36,8 @@ public class User {
     private Set<Meeting> meetings = new HashSet<>();
 
 
-    @Column(length = 50, unique = true, nullable = false)
-    private String username;
+//    @Column(length = 50, unique = true, nullable = false)
+//    private String username;
 
     @Column(length = 50, nullable = false)
     private String firstname;
@@ -50,8 +55,8 @@ public class User {
     @Column(name = "image_url", columnDefinition = "VARCHAR(255) DEFAULT 'https://www.freeiconspng.com/uploads/profile-icon-28.png'")
     private String imageUrl;
 
-
-    @Column(length = 50, nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private UserRole role;
 
     private String status;
@@ -63,7 +68,33 @@ public class User {
     private LocalDateTime updatedOn;
 
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(UserRole.ROLE_ADMIN.name()));
+    }
 
+    @Override
+    public String getUsername() {
+        return email;
+    }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

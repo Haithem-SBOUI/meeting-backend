@@ -7,12 +7,12 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    User findByUsername(String userName);
+    Optional<User> findByEmail(String email);
 
     void deleteById(Long id);
 
     @Override
     boolean existsById(Long id);
 
-    Optional<User> findByEmail(String email);
+
 }
