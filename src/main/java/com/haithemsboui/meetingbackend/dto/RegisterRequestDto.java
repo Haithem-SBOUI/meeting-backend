@@ -1,5 +1,6 @@
 package com.haithemsboui.meetingbackend.dto;
 
+import com.haithemsboui.meetingbackend.model.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,4 +15,5 @@ public class RegisterRequestDto {
     private String lastname;
     private String email;
     private String password;
+    private UserRole role;
 }

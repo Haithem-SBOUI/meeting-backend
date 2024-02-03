@@ -52,7 +52,7 @@ public class User implements UserDetails {
     private String email;
 
     //    @Column(columnDefinition = "VARCHAR(255) DEFAULT 'https://www.freeiconspng.com/uploads/profile-icon-28.png'")
-    @Column(name = "image_url", columnDefinition = "VARCHAR(255) DEFAULT 'https://www.freeiconspng.com/uploads/profile-icon-28.png'")
+//    @Column(name = "image_url", columnDefinition = "VARCHAR(255) DEFAULT 'https://www.freeiconspng.com/uploads/profile-icon-28.png'")
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
@@ -71,6 +71,8 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(UserRole.ROLE_ADMIN.name()));
+//        return UserRole.getAuthorities();
+
     }
 
     @Override
