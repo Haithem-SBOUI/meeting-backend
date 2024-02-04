@@ -13,7 +13,6 @@ import java.util.Set;
 @Data
 public class UserDto implements Serializable {
     Long id;
-    String username;
     String firstname;
     String lastname;
     String password;

@@ -44,11 +44,11 @@ public class MeetingController {
 //    get all
 
 
-    @GetMapping("/get-all-meeting")
-    public ResponseEntity<?> getAllMeetings() {
-        List<MeetingDto> allMeetings = meetingService.getAllMeeting();
-        if (!allMeetings.isEmpty()) {
-            return ResponseEntity.ok(allMeetings);
+    @GetMapping("/get-public-meeting")
+    public ResponseEntity<?> getPublicMeetings() {
+        List<MeetingDto> publicMeetings = meetingService.getPublicMeetings();
+        if (!publicMeetings.isEmpty()) {
+            return ResponseEntity.ok(publicMeetings);
         } else {
             return ResponseEntity.noContent().build();
         }

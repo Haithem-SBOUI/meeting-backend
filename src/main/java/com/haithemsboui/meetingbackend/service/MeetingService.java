@@ -50,10 +50,10 @@ public class MeetingService {
     }
 
 
-    public List<MeetingDto> getAllMeeting() {
-        List<Meeting> allMeetings = meetingRepository.findAll();
-        if (!allMeetings.isEmpty()) {
-            return meetingMapper.toDtoList(allMeetings);
+    public List<MeetingDto> getPublicMeetings() {
+        List<Meeting> publicMeetings = meetingRepository.findAll();
+        if (!publicMeetings.isEmpty()) {
+            return meetingMapper.toDtoList(publicMeetings);
         } else {
             return Collections.emptyList();
         }
