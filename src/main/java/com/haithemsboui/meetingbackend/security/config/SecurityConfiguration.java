@@ -26,7 +26,9 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private static final String[] WHITE_LIST_URL = {
+            "/api/file/images/**",
             "/api/v1/auth/**",
+            "/api/v1/file/**",
             "/v2/api-docs",
             "/v3/api-docs",
             "/v3/api-docs/**",
@@ -51,6 +53,8 @@ public class SecurityConfiguration {
                                 .requestMatchers("/api/v1/test/**").hasAnyRole("ADMIN", "USER")
                                 .requestMatchers("/api/v1/user/**").hasAnyRole("ADMIN", "USER")
                                 .requestMatchers("/api/v1/meeting/**").hasAnyRole("ADMIN", "USER")
+                                 .requestMatchers("/api/file/**").hasAnyRole("ADMIN", "USER")
+//                                .requestMatchers("/api/v1/file/**").hasAnyRole("ADMIN", "USER")
                                 .anyRequest()
                                 .authenticated()
                 )

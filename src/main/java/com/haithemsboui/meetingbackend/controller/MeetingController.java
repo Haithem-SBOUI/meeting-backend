@@ -107,9 +107,7 @@ public class MeetingController {
                         .message(meetingService.updateMeeting(id, updatedMeetingDto))
                         .build());
 
-        }
-
-
+    }
 
 
     @PutMapping("/update-meeting-status/{id}/{newStatus}")
@@ -121,8 +119,6 @@ public class MeetingController {
     }
 
 
-
-
 //    ### DELETE ###
 //    delete by organizer id
 
@@ -130,8 +126,8 @@ public class MeetingController {
     //    delete by meeting id
     @DeleteMapping("/delete-meeting-by-id/{id}")
     public ResponseEntity<?> deleteMeetingById(@PathVariable Long id) {
-            meetingService.deleteMeetingById(id);
-            return ResponseEntity.noContent().build();
+        meetingService.deleteMeetingById(id);
+        return ResponseEntity.noContent().build();
 
     }
 

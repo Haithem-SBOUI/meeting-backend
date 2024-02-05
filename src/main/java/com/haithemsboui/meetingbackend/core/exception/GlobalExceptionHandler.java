@@ -2,6 +2,7 @@ package com.haithemsboui.meetingbackend.core.exception;
 
 
 import com.haithemsboui.meetingbackend.core.exception.type.AlreadyExistsException;
+import com.haithemsboui.meetingbackend.core.exception.type.FileNotSelectedException;
 import com.haithemsboui.meetingbackend.core.exception.type.InternalServerErrorException;
 import com.haithemsboui.meetingbackend.core.exception.type.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
 
+    @ExceptionHandler(FileNotSelectedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // You can choose an appropriate status code for a bad request
+    public ResponseEntity<String> fileNotSelectedException(FileNotSelectedException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
 
 
 }

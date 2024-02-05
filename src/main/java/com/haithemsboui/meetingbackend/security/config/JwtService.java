@@ -21,7 +21,7 @@ public class JwtService {
 
     private String SECRET_KEY = "f653598a9443190f910f8844f24384ebf2044114c058bbff6e7d5108db9ebcbf";
 
-    private long jwtExpiration = 86400000;
+    private long jwtExpiration = 864000000;//10 days
 //    private long refreshExpiration = 604800000;
 
     public String extractUsername(String token) {

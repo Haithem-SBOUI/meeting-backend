@@ -51,9 +51,7 @@ public class User implements UserDetails {
     @Column(length = 100, unique = true, nullable = false)
     private String email;
 
-    //    @Column(columnDefinition = "VARCHAR(255) DEFAULT 'https://www.freeiconspng.com/uploads/profile-icon-28.png'")
-//    @Column(name = "image_url", columnDefinition = "VARCHAR(255) DEFAULT 'https://www.freeiconspng.com/uploads/profile-icon-28.png'")
-    private String imageUrl;
+    private String profilePicturePath;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
